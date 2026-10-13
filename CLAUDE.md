@@ -2,7 +2,7 @@
 
 샘플 PPT의 디자인을 DESIGN.md로 추출하고, 다른 PPT를 그 디자인으로 변환하는 Claude Code 스킬.
 스킬 본체: `.claude/skills/slide-restyle/` (scripts/, reference/).
-- 계획·마일스톤(M1–M4)·진행 상태: [docs/PLAN.md](docs/PLAN.md) — 현재 M1 완료, M2 대기
+- 계획·마일스톤(M1–M4)·진행 상태: [docs/PLAN.md](docs/PLAN.md) — 현재 M2 완료, M3 대기
 - 주요 결정과 이유: [docs/DECISIONS.md](docs/DECISIONS.md) — 새 결정은 여기에 추가, 디자인 값 자체는 DESIGN.md
 
 ## Commands
@@ -11,6 +11,8 @@
 S=.claude/skills/slide-restyle/scripts
 uv run $S/extract_design.py samples/*.pptx --out design     # 측정 → design/{design.json,summary.md,assets/,base.pptx,base.potx}
 uv run $S/design_tokens.py DESIGN.md                        # DESIGN.md의 yaml design-tokens 블록 검증
+uv run $S/extract_content.py inputs/x.pptx --render         # → work/x/{content.json,media/,src_png/}
+uv run $S/check_plan.py work/x/plan.json --md work/x/plan.md # plan.json 원문 축자·누락·한도 검사 + 분류표
 $S/render.sh <deck.pptx> <out_dir> [dpi]                    # PDF + slide-N.png + 폰트 대체 경고
 ```
 스크립트는 PEP 723 헤더로 의존성을 선언 → 항상 `uv run`으로 실행 (전역 pip 설치 없음).
@@ -19,7 +21,8 @@ $S/render.sh <deck.pptx> <out_dir> [dpi]                    # PDF + slide-N.png 
 - 스크립트: 측정·추출·생성·렌더 (결정적). Claude: DESIGN.md 서술, 레이아웃 분류, 요약/분할 판단, 렌더 검수.
 - 디자인 변형 2개: `collision`(기본) / `srmc`. 레이아웃 좌표는 native 변형 기준 실측값으로 저장하고, 다른 변형에서는 content_area 선형 변환(→ 자동으로 estimated).
 - DESIGN.md 토큰은 모두 `source: measured`(+evidence `C:S5`) 또는 `estimated`(+basis). 추정값은 본문에도 "(추정)".
-- 원본 내용은 바꾸지 않는다. 요약/분할/수작업 필요는 outputs/의 변환 보고서에 기록.
+- 원본 내용은 바꾸지 않는다. plan.json 텍스트는 `{"t","src"}` 참조만(축자 부분 문자열) — check_plan.py가 검사.
+  요약/분할/수작업 필요는 outputs/의 변환 보고서에 기록.
 
 ## Gotchas
 - LibreOffice headless는 번들 fontconfig라 macOS 폰트를 못 본다 → 반드시 `render.sh` 사용(폰트 설정을 생성해 주입). 직접 `soffice` 호출 금지.

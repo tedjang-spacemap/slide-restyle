@@ -63,3 +63,25 @@
   주입한다. 맑은 고딕은 Apple SD Gothic Neo로 alias(샘플 한글 QA만 근사치).
 - 이유: LibreOffice headless의 번들 fontconfig는 macOS 폰트를 못 보고, Homebrew Roboto는 가변 폰트라
   "Roboto Light"로 매칭되지 않는다. 시스템 폰트 폴더는 건드리지 않는다.
+
+## 13. 카탈로그에 `io_steps`·`card_grid`·표지 칩/범례를 추정 레이아웃으로 추가 — 2026-10-13 (사용자 결정)
+- 결정: 입력/처리/출력 단계 행(3열 × 최대 5행)은 `io_steps`, 같은 형식 카드 3×2/2×2는 `card_grid`, 큰 숫자 카드 한 줄은
+  `card_grid.stats`, 표지의 단계 칩 행과 범례는 `cover.flow`/`cover.legend`. 모두 collision native, `estimated`.
+- 이유: 첫 입력(spacemap-flow) 10장 중 5장이 같은 단계 행 격자라 `table`에 넣으면 화살표 흐름과 태그가 사라진다.
+  칩·범례·숫자 카드는 노트로만 남기면 화면에서 내용이 빠진다.
+- 메모: 셀·카드는 실측 `panel` 컴포넌트를 재사용. 글자 크기는 실측 스타일에서 줄인 추정값(DESIGN.md `type`).
+
+## 14. "① 섹션 — 소제목" 제목은 키커와 제목으로 나눈다 — 2026-10-13 (사용자 결정)
+- 결정: 키커 `< ② 용어집 >` + 제목 `후보 만들기 (2-1 ~ 2-4)`. 섹션 표시가 없으면 키커는 덱 제목. 제목 끝의 다른 서식 상태 문구
+  ("활성")는 status 배지로.
+- 이유: 샘플(C:S5–S9)의 키커 관례와 같고, 글자는 바꾸지 않고 자리만 옮긴다.
+
+## 15. plan.json의 텍스트는 원본 shape 참조로만 쓰고 check_plan.py로 검사한다 — 2026-10-13
+- 결정: 모든 텍스트는 `{"t", "src"}`이고 `t`는 원본 shape 텍스트의 축자 부분 문자열. 원본 텍스트 shape는 참조·`covers`·`dropped`
+  중 하나에 반드시 들어간다.
+- 이유: "원본 내용은 바꾸지 않는다"를 사람 눈이 아니라 스크립트로 확인하기 위해. 분류는 Claude가, 검증은 스크립트가 맡는다.
+
+## 16. 글자 태그(D/N/A/H 등) 색은 덱마다 plan.json에서 정한다 — 2026-10-13
+- 결정: 팔레트 순서 `components.tag_chip.palette`에서 원본 색과 가까운 색을 고른다. spacemap-flow: D 파랑(status_blue),
+  H 노랑(status_amber), A 분홍(diagram_pink), N 회색(text_label).
+- 이유: 태그 의미는 덱마다 다르다. 원본의 초록(N)·보라(A)에 맞는 색은 팔레트에 없어 추정(초록 00B050은 #8에서 제외한 색).
