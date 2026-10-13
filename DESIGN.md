@@ -235,17 +235,18 @@ components:
     # 샘플 슬라이드의 상자(도형) 스타일 — design.json box_styles 실측. 입력 덱의 상자 종류는 plan.json deck.box_map으로
     # 이 중 하나에 대응시킨다(도식·단계 셀·카드·표지 칩 공통). fill/line은 색 이름 또는 `<색>.fill`, text는 상자 안 기본 글자색
     # (원본에서 본문색이던 런만 바뀜). 모양(geom)은 도식에서는 원본 유지, 새로 그리는 칸에서는 이 값.
+    # dash(선 모양 규칙, 스타일마다): keep = 원본 상자가 점선이면 점선 유지, none = 항상 실선, dash = 항상 점선. 생략하면 keep.
+    #   샘플 상자에는 점선이 없어(점선은 R:S3 타원·R:S4 호뿐) 이 규칙 자체가 추정이다. 점선 처리를 바꾸려면 여기만 고친다.
     # 상태 상자 안 본문은 흰색·보조색 그대로 둔다: 샘플의 상태색 글자는 12pt Bold 짧은 배지 문구뿐이고, 본문에 쓰면 7장 Don't(노랑 본문)와
     # 대비 기준(60A5FA/1E3A66 = 4.46 < 4.5)에 걸린다. 상태 채움은 예외 단계에만 써서 샘플의 면적 비율(패널:상태색 ≈ 9–13:1)을 지킨다 (M3).
-    panel:        {geom: roundRect, corner_adj: 2222, fill: panel, line: panel, line_pt: 0.86, source: measured, evidence: "R:S4–S8"}
-    panel_alt:    {geom: roundRect, corner_adj: 2222, fill: panel_alt, line: rule_subtle, line_pt: 0.86, source: measured, evidence: "R:S7"}
-    status_blue:  {geom: roundRect, corner_adj: 17857, fill: status_blue.fill, line: status_blue.fill, line_pt: 0.86, source: measured, evidence: "R:S2,S6–S8 (Arial 12 Bold 60A5FA)"}
-    status_amber: {geom: roundRect, corner_adj: 17857, fill: status_amber.fill, line: status_amber.fill, line_pt: 0.86, source: measured, evidence: "R:S2,S3,S5 (Arial 12 Bold FFC000)"}
-    status_red:   {geom: roundRect, corner_adj: 17857, fill: status_red.fill, line: status_red.fill, line_pt: 0.86, source: measured, evidence: "R:S2,S4 (Arial 12 Bold F87171)"}
-    frame:        {geom: rect, fill: none, line: rule_subtle, line_pt: 0.65, source: measured, evidence: "R:S3 (그림 테두리)"}
-    callout:      {geom: rect, fill: FFFFFF, line: status_red, line_pt: 0.65, text: status_red, source: measured, evidence: "R:S3 (흰 바탕 라벨)"}
-    panel_line:   {geom: roundRect, corner_adj: 2222, fill: panel, line: "<box_map.line>", line_pt: 1.25, source: estimated, basis: "샘플에 색 테두리 상자 없음. 상태색이 없는 종류(보라·초록·강조 파일)는 panel + 색 테두리"}
-    dash:         {source: estimated, basis: "샘플에 점선 상자 없음(점선은 R:S3 타원·R:S4 호뿐). 원본 상자가 점선이면 대응 스타일에 점선만 유지"}
+    panel:        {geom: roundRect, corner_adj: 2222, fill: panel, line: panel, line_pt: 0.86, dash: keep, source: measured, evidence: "R:S4–S8"}
+    panel_alt:    {geom: roundRect, corner_adj: 2222, fill: panel_alt, line: rule_subtle, line_pt: 0.86, dash: keep, source: measured, evidence: "R:S7"}
+    status_blue:  {geom: roundRect, corner_adj: 17857, fill: status_blue.fill, line: status_blue.fill, line_pt: 0.86, dash: keep, source: measured, evidence: "R:S2,S6–S8 (Arial 12 Bold 60A5FA)"}
+    status_amber: {geom: roundRect, corner_adj: 17857, fill: status_amber.fill, line: status_amber.fill, line_pt: 0.86, dash: keep, source: measured, evidence: "R:S2,S3,S5 (Arial 12 Bold FFC000)"}
+    status_red:   {geom: roundRect, corner_adj: 17857, fill: status_red.fill, line: status_red.fill, line_pt: 0.86, dash: keep, source: measured, evidence: "R:S2,S4 (Arial 12 Bold F87171)"}
+    frame:        {geom: rect, fill: none, line: rule_subtle, line_pt: 0.65, dash: keep, source: measured, evidence: "R:S3 (그림 테두리)"}
+    callout:      {geom: rect, fill: FFFFFF, line: status_red, line_pt: 0.65, text: status_red, dash: keep, source: measured, evidence: "R:S3 (흰 바탕 라벨)"}
+    panel_line:   {geom: roundRect, corner_adj: 2222, fill: panel, line: "<box_map.line>", line_pt: 1.25, dash: keep, source: estimated, basis: "샘플에 색 테두리 상자 없음. 상태색이 없는 종류(보라·초록·강조 파일)는 panel + 색 테두리"}
   arrow:
     source: estimated
     basis: "샘플에 화살표 없음. rule 색 선 + 삼각 화살촉"
