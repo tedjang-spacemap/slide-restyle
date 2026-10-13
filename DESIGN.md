@@ -101,6 +101,19 @@ type:
   srmc_kicker:   {font: heading, size: 13.3, bold: true, color: accent, caps: true, source: measured, evidence: "R:S2–S9"}
   srmc_title:    {font: heading, size: 28, bold: true, color: text, line_spacing: 0.9, source: measured, evidence: "R:S2–S9"}
   reference:     {font: heading, size: 13.3, color: text, label_bold: true, para_space_before: 7.1, source: measured, evidence: "R:S9"}
+  # --- process / cards (estimated, added M2 for diagram-style inputs) ---
+  lead_compact:  {font: body, size: 16, color: text_muted, source: estimated, basis: "lead(23)는 도식 위 한 줄 설명에 너무 큼. note(15.5)보다 약간 크게"}
+  io_step_no:    {font: heading, size: 12, bold: true, color: accent, source: estimated, basis: "step_number(34)의 색·굵기를 셀 크기로 축소"}
+  io_headline:   {font: heading, size: 13.3, bold: true, color: text, source: estimated, basis: "table_key(13.3)와 같은 크기"}
+  io_line:       {font: body, size: 11.5, color: text, source: estimated, basis: "table_cell(12)보다 한 단계 작게; 셀 안 3줄을 0.63″에 넣기 위함"}
+  io_note:       {font: body, size: 10.5, color: text_muted, source: estimated, basis: "caption(10.7) 근처, overflow.floors.table_cell(10.5)"}
+  tag:           {font: heading, size: 11, bold: true, color: "tag.hex", source: estimated, basis: "pill 글자 규칙(Bold, 상태색)을 글자 태그에 적용"}
+  card_heading:  {font: heading, size: 17, bold: true, color: accent, source: estimated, basis: "col_heading(22)을 6칸 그리드용으로 축소, step_headline(17) 크기"}
+  card_body:     {font: body, size: 14, color: text, source: estimated, basis: "overflow.floors.body(14)"}
+  stat_number:   {font: heading, size: 34, bold: true, color: accent, source: estimated, basis: "step_number(34) 실측 스타일 재사용"}
+  stat_label:    {font: heading, size: 15, bold: true, color: text, source: estimated, basis: "panel_heading(14.7) 근처"}
+  legend:        {font: body, size: 10.5, color: text_muted, source: estimated, basis: "footer(9.5)보다 약간 크게; 글자 태그는 tag 스타일"}
+  chip:          {font: heading, size: 13, bold: true, color: text, align: ctr, source: estimated, basis: "pill(12)보다 약간 크게, 표지 흐름 칩"}
 
 chrome:
   # Each key is a design variant. Shared: colors, fonts, type, components, cover/closing.
@@ -202,6 +215,27 @@ components:
   highlight:
     rect:    {shape: roundRect, line: {color: highlight_red, width_pt: 3}, fill: none, source: measured, evidence: "C:S2"}
     ellipse: {shape: ellipse, line: {color: status_red, width_pt: 1.72, dash: dash}, fill: none, source: measured, evidence: "R:S3"}
+  tag_chip:
+    source: estimated
+    basis: "입력 덱의 글자 태그(D/N/A/H 등)를 색 글자로 옮김. 색은 상태색 순서로 배정"
+    shape: none                       # bold colored letter, no fill (source decks use colored letters)
+    palette: [status_blue, status_amber, diagram_pink, text_label, status_red, diagram_blue]
+    note: "태그→색 대응은 덱마다 plan.json의 deck.tags에 적는다. 원본 색과 가까운 색을 고른다"
+  step_cell:
+    source: estimated
+    basis: "panel 컴포넌트(R:S4–S8 실측)를 표 셀 크기로 사용"
+    shape: roundRect
+    corner_adj: 6000
+    fill: panel
+    line: {color: rule_subtle, width_pt: 0.75}
+    kind_line: {width_pt: 1.25, color: "tag.hex", use: "처리 칸만 — 대표 태그 색 테두리. 원본이 점선이면 dash 유지"}
+    insets: [0.1, 0.04, 0.1, 0.04]
+    anchor: ctr
+  arrow:
+    source: estimated
+    basis: "샘플에 화살표 없음. rule 색 선 + 삼각 화살촉"
+    line: {color: rule, width_pt: 1.0}
+    head: triangle
   device_art:
     box: [10.22, 4.71, 2.29, 2.41]
     pieces:   # z-order: back to front
@@ -224,7 +258,9 @@ layouts:
       title:  {box: [0.55, 3.13, 8.47, 1.24], style: cover_title, insets: [0.05, 0.05, 0.05, 0.05], autofit: shape, max_lines: 2}
       meta:   {box: [0.55, 4.6, 7.13, 0.97], style: cover_meta, insets: [0.1, 0.05, 0.1, 0.05], autofit: shape, max_lines: 3}
       art:    {component: device_art}
-    capacity: {title_lines: 2, title_chars_per_line: 30, meta_lines: 3}
+      flow:   {box: [0.55, 5.85, 9.45, 0.5], optional: true, source: estimated, basis: "meta 아래 빈 띠(5.57–6.6)에 칩 행 배치, device_art(x 10.22) 왼쪽에서 끝남", item: {style: chip, component: step_cell, max_items: 5, gap: 0.35, connector: arrow}}
+      legend: {box: [0.55, 6.62, 9.45, 0.3], optional: true, style: legend, source: estimated, basis: "flow 아래 한 줄"}
+    capacity: {title_lines: 2, title_chars_per_line: 30, meta_lines: 3, flow_items: 5}
   closing:
     use_for: 마지막 감사/연락처 장
     native: none
@@ -346,6 +382,48 @@ layouts:
       body:  {box: [0.42, 2.12, 5.9, 4.66], component: bullets}
       image: {box: [6.62, 2.12, 6.3, 4.66], fit: contain, align: top-right}
     capacity: {lines: 9}
+  io_steps:
+    use_for: "입력 → 처리 → 출력 단계 행(3열 × 2–5행). 처리 칸 = 단계 번호 + 제목 + 글자 태그 + 보조 줄"
+    native: collision
+    source: estimated
+    basis: "샘플에 없음. 입력 덱(spacemap-flow S3,S5,S6,S8,S9)의 반복 구조를 collision content_area에 맞춤. 셀은 step_cell(panel), 머리글은 table_header 실측 스타일"
+    regions:
+      lead:     {box: [0.42, 2.12, 12.5, 0.4], style: lead_compact, optional: true, max_lines: 1}
+      footnote: {box: [0.42, 6.5, 12.5, 0.28], style: io_note, optional: true, max_lines: 1}
+    header: {y: 2.56, h: 0.26, style: table_header}
+    columns:
+      in:   {x: 0.42, w: 3.2}
+      step: {x: 3.92, w: 5.0}
+      out:  {x: 9.22, w: 3.7}
+    arrows: {component: arrow, between: [[in, step], [step, out]], gap: 0.3}
+    rows: {top: 2.88, bottom: 6.42, gap: 0.08, max: 5, bottom_without_footnote: 6.78}
+    cell:
+      component: step_cell
+      in:   {lines: io_line, secondary: io_note}
+      step: {number: io_step_no, headline: io_headline, tags: tag, lines: io_line, note: io_note}
+      out:  {lines: io_line, secondary: io_note}
+    capacity: {rows: 5, step_lines: 3, in_lines: 2, out_lines: 3}
+  card_grid:
+    use_for: "같은 형식의 카드 4–6개(3×2 / 2×2) — 원칙·특징 목록. 위에 배너 1개, 아래 범례 1줄을 선택적으로"
+    native: collision
+    source: estimated
+    basis: "intro_columns 3단 열(C:S4 실측 x/w)을 2행 그리드로 확장. 카드는 panel 컴포넌트"
+    regions:
+      banner: {box: [0.42, 2.12, 12.5, 0.72], component: panel, optional: true, line_dash_from_source: true, heading: {style: card_heading}, body: {style: card_body}}
+      legend: {box: [0.42, 6.84, 12.5, 0.24], style: legend, optional: true}
+    columns: {count: 3, x: [0.42, 4.71, 9.0], w: 3.91}
+    rows: {with_banner: {y: [3.04, 4.95], h: 1.73}, without_banner: {y: [2.12, 4.5], h: 2.2}}
+    card: {component: panel, insets: [0.18, 0.14, 0.18, 0.14], heading: {style: card_heading, h: 0.36}, body: {style: card_body, gap: 0.08}}
+    capacity: {cards: 6, card_body_lines: 3}
+    variants:
+      two_by_two: {source: estimated, basis: "intro_columns.two_columns(x/w)와 같은 2단", columns: {count: 2, x: [0.42, 6.86], w: 6.06}, capacity: {cards: 4}}
+      stats:
+        source: estimated
+        basis: "숫자 카드 1행(3–4개). 숫자는 step_number 실측 스타일"
+        columns: {count: 4, x: [0.42, 3.64, 6.86, 10.08], w: 2.84}
+        rows: {y: [2.12], h: 1.6}
+        card: {number: {style: stat_number, h: 0.6}, label: {style: stat_label, h: 0.3}, detail: {style: io_note, max_lines: 2}}
+        capacity: {cards: 4}
   references:
     use_for: 출처/참고문헌 목록
     native: srmc
@@ -361,7 +439,7 @@ overflow:
   order: [shrink, reflow, split, summarize]
   shrink:
     min_ratio: 0.85
-    floors: {title: 22, body: 14, note: 13, bullet_l1: 16, bullet_l2: 14, table_cell: 10.5, kv_value: 12.5, step_headline: 15}
+    floors: {title: 22, body: 14, note: 13, bullet_l1: 16, bullet_l2: 14, table_cell: 10.5, kv_value: 12.5, step_headline: 15, io_line: 10.5, io_note: 9.5, card_body: 12}
     source: estimated
     basis: "floors는 샘플 내 같은 역할의 최소 실측 크기 근처 (note 15.5, R 셀 12, R 캡션 10.7)"
   reflow:
@@ -384,6 +462,8 @@ overflow:
     visual_kv:        {rows: 6}
     image_pair_kv:    {rows: 5}
     bullets:          {lines: 9}
+    io_steps:         {rows: 5, step_lines: 3}
+    card_grid:        {cards: 6, card_body_lines: 3}
 ```
 
 ## 1. Visual Theme & Atmosphere
@@ -436,6 +516,9 @@ overflow:
 - **불릿 (추정)**: `•` 노란색, L1 Roboto Light 20 흰색, L2 17 회색, 들여쓰기 0.3″/0.6″.
 - **이미지 프레임**: 스크린샷은 테두리 없이 좌상단 정렬(C). 비교용 그림은 `4B5563` 0.65pt 테두리 + 위 헤더 + 아래 캡션(R:S3).
 - **강조 표시**: 스크린샷 위 빨간 3pt 둥근 사각형(C:S2), 그림 위 빨간 점선 타원 + 흰 바탕 라벨(R:S3).
+- **단계 셀·카드 (추정)**: 패널(`0B1426` 82%) 둥근 사각형. 처리 칸은 대표 태그 색 1.25pt 테두리, 원본이 점선이면 점선 유지.
+- **글자 태그 (추정)**: D/N/A/H 같은 한 글자 표시는 채움 없이 상태색 Bold 글자로. 태그→색 대응은 덱마다 정한다(plan.json).
+- **화살표 (추정)**: `808080` 1pt 선 + 삼각 화살촉.
 
 ## 5. Layout Principles
 
@@ -468,6 +551,10 @@ overflow:
 | references | 출처 목록 | srmc | 추정 | 실측 R:S9 |
 | section | 섹션 구분 | collision | 추정 | 추정 |
 | bullets / bullets_image | 불릿 본문 (+이미지) | collision | 추정 | 추정 |
+| io_steps | 입력 → 처리 → 출력 단계 행 (3열 × 최대 5행) | collision | 추정 | 추정 |
+| card_grid | 카드 3×2 / 2×2 (+배너, 범례), 숫자 카드 1×4(`stats`) | collision | 추정 | 추정 |
+
+표지의 단계 칩 행(`flow`)과 범례(`legend`)도 **(추정)** 선택 영역이다(M2, 입력 덱에 표지 칩이 있어 추가).
 
 ## 6. Depth & Elevation
 
@@ -497,7 +584,7 @@ overflow:
 3. **분할**: 불릿 묶음·표 행·키-값 행 단위로 나누고, 제목은 유지하고 키커에 `· n/m`을 붙인다(C:S5–S9 관례). 표는 헤더를 반복한다.
 4. **요약**: 분할이 부자연스러울 때만. 원문 전체를 변환 보고서와 슬라이드 노트에 남긴다.
 
-레이아웃별 한도: 표 6행, 키-값 6행(image_pair_kv 5행), 목차 6항목, 불릿 9줄, 표지 제목 2줄.
+레이아웃별 한도: 표 6행, 키-값 6행(image_pair_kv 5행), 목차 6항목, 불릿 9줄, 표지 제목 2줄, 단계 행 5행, 카드 6개.
 
 ## 9. Agent Prompt Guide
 
@@ -506,11 +593,16 @@ overflow:
 2. 큰 이미지 1장 + 짧은 설명 → `screenshot_steps`(단계 번호가 있으면 `step_no` 사용, 번호 목록이면 `numbered_list` 변형).
 3. 이미지 1장 + 불릿 여러 개 → `bullets_image`. 불릿만 → `bullets`.
 4. 표 → `table`(6행 초과 시 분할). 2열 표(항목/값)는 `visual_kv`의 kv 단독 또는 `table`.
-5. 병렬 항목 3개(또는 2개) → `intro_columns`.
+   입력/처리/출력처럼 열 머리글 아래 같은 모양 상자가 행마다 화살표로 이어진 격자 → `io_steps`(5행 초과 시 분할).
+5. 병렬 항목 3개(또는 2개) → `intro_columns`. 같은 형식 카드 4–6개 → `card_grid`, 큰 숫자 + 이름 카드 → `card_grid.stats`.
 6. 출처/참고문헌 → `references`.
 7. SmartArt, 자유 배치 도식, 도형 10개 이상이 겹친 다이어그램 → 억지로 맞추지 말고 원본 렌더 이미지를 `image_full`로
    넣고 보고서에 **수작업 필요**로 표시.
 8. 원문 텍스트는 바꾸지 않는다. 키커는 입력에 섹션 정보가 있을 때만 채우고, 없으면 덱 제목을 쓴다.
+   제목이 "① 섹션 — 소제목" 꼴이면 키커 `< ① 섹션 >` + 제목 "소제목"으로 나눈다(글자는 그대로, 자리만 옮김. 사용자 결정 2026-10-13).
+   제목 끝에 다른 크기·색의 상태 문구가 붙어 있으면 `status` 배지로 옮긴다.
+   도식 슬라이드에 표지 칩·범례·숫자 카드처럼 넣을 자리가 있는 요소는 노트로 숨기지 말고 해당 영역(`cover.flow`, `legend`,
+   `card_grid.stats`)으로 옮긴다. 자유 도식 부분만 `image_full`로 남기고, 한 슬라이드가 둘로 나뉘면 키커에 `· n/m`.
 9. 변형은 사용자가 지정한다(`--variant`, 기본 collision). 지정이 없을 때 임의로 바꾸지 않는다. 변환 보고서에 사용한
    변형과, 그 변형에서 **추정**으로 그려진 레이아웃 목록을 적는다.
 10. srmc 변형에서는 출처 줄(`source_line`)을 채울 수 있으면 채우고(입력의 출처/각주 텍스트), 없으면 비운다. 페이지 번호는 넣지 않는다.
