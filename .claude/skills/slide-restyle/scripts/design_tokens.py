@@ -79,6 +79,31 @@ def validate(tokens: dict, root: Path) -> tuple[list[str], list[str]]:
             if x < -0.01 or y < -0.01 or x + w > W + 0.01 or y + h > H + 0.01:
                 errors.append(f"{where}: {box} outside {W}×{H}")
 
+    variants = tokens["meta"].get("variants") or list(tokens["chrome"])
+    if set(variants) != set(tokens["chrome"]):
+        errors.append(f"meta.variants {variants} != chrome keys {list(tokens['chrome'])}")
+    if tokens["meta"].get("default_chrome") not in tokens["chrome"]:
+        errors.append(f"meta.default_chrome: unknown variant {tokens['meta'].get('default_chrome')!r}")
+    for vname, ch in tokens["chrome"].items():
+        if not (isinstance(ch.get("content_area"), list) and len(ch["content_area"]) == 4):
+            errors.append(f"chrome.{vname}.content_area: must be [x, y, w, h]")
+        for el in ch.get("elements", []):
+            st = el.get("style")
+            if isinstance(st, str) and st not in types:
+                errors.append(f"chrome.{vname}.{el.get('id')}.style: unknown type style {st!r}")
+            col = el.get("color")
+            if col and col not in colors:
+                errors.append(f"chrome.{vname}.{el.get('id')}.color: unknown color {col!r}")
+        ov = ch.get("style_overrides") or {}
+        for src_role, dst_role in (ov.get("fonts") or {}).items():
+            for r in (src_role, dst_role):
+                if r not in fonts:
+                    errors.append(f"chrome.{vname}.style_overrides.fonts: unknown font role {r!r}")
+        for src_c, dst_c in (ov.get("colors") or {}).items():
+            for c in (src_c, dst_c):
+                if c not in colors:
+                    errors.append(f"chrome.{vname}.style_overrides.colors: unknown color {c!r}")
+
     for name, lay in tokens["layouts"].items():
         src = lay.get("source")
         if src not in ("measured", "estimated"):
@@ -87,9 +112,11 @@ def validate(tokens: dict, root: Path) -> tuple[list[str], list[str]]:
             errors.append(f"layouts.{name}: measured without evidence")
         if src == "estimated" and "basis" not in lay:
             errors.append(f"layouts.{name}: estimated without basis")
-        ch = lay.get("chrome")
-        if ch not in (None, "none") and ch not in tokens["chrome"]:
-            errors.append(f"layouts.{name}.chrome: unknown chrome {ch!r}")
+        native = lay.get("native")
+        if native is None:
+            errors.append(f"layouts.{name}: missing native (variant key or 'none')")
+        elif native != "none" and native not in tokens["chrome"]:
+            errors.append(f"layouts.{name}.native: unknown variant {native!r}")
         for rname, region in (lay.get("regions") or {}).items():
             st = region.get("style") if isinstance(region, dict) else None
             if isinstance(st, str) and st not in types:
@@ -105,6 +132,14 @@ def validate(tokens: dict, root: Path) -> tuple[list[str], list[str]]:
     return errors, warnings
 
 
+def provenance(layout: dict, variant: str) -> str:
+    """A layout keeps its own source only under its native variant (or when native is 'none')."""
+    native = layout.get("native", "none")
+    if native in ("none", variant):
+        return layout.get("source", "estimated")
+    return "estimated"
+
+
 def main():
     path = Path(sys.argv[1] if len(sys.argv) > 1 else "DESIGN.md")
     try:
@@ -113,10 +148,12 @@ def main():
         sys.exit(f"ERROR {e}")
     errors, warnings = validate(tokens, path.resolve().parent)
     lays = tokens.get("layouts", {})
-    measured = [k for k, v in lays.items() if v.get("source") == "measured"]
-    estimated = [k for k, v in lays.items() if v.get("source") == "estimated"]
-    print(f"{path}: {len(tokens.get('colors', {}))} colors, {len(tokens.get('type', {}))} type styles, "
-          f"{len(lays)} layouts (measured {len(measured)}: {', '.join(measured)}; estimated {len(estimated)}: {', '.join(estimated)})")
+    print(f"{path}: {len(tokens.get('colors', {}))} colors, {len(tokens.get('type', {}))} type styles, {len(lays)} layouts")
+    for variant in tokens.get("chrome", {}):
+        m = [k for k, v in lays.items() if provenance(v, variant) == "measured"]
+        e = [k for k, v in lays.items() if provenance(v, variant) == "estimated"]
+        default = " (default)" if variant == tokens.get("meta", {}).get("default_chrome") else ""
+        print(f"  variant {variant}{default}: measured {len(m)} [{', '.join(m)}] / estimated {len(e)} [{', '.join(e)}]")
     for w in warnings:
         print(f"WARN  {w}")
     for e in errors:
