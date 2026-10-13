@@ -13,7 +13,7 @@ slide per plan slide (more when a slide has to be split). Writes:
   work/x/build/    build.json (per-slide fit results) and image crops; with --render also png/ via render.sh
 
 Text sizes are fitted with the real font files (Pillow): shrink down to `overflow.shrink` limits, then
-split by rows (io_steps). Every text comes from the source shape named by its `src`; run colors are
+split by rows (io_steps, table). Every text comes from the source shape named by its `src`; run colors are
 mapped through `deck.color_map`. Schema: reference/plan-schema.md.
 """
 from __future__ import annotations
@@ -33,6 +33,7 @@ from lxml import etree
 from PIL import Image, ImageFont
 from pptx import Presentation
 from pptx.enum.shapes import MSO_CONNECTOR, MSO_SHAPE
+from pptx.enum.text import MSO_ANCHOR
 from pptx.opc.constants import RELATIONSHIP_TYPE as RT
 from pptx.util import Emu, Pt
 
@@ -1385,6 +1386,132 @@ def render_diagram_restyle(b: Builder, spec: dict):
         b.text(slide, fb, paras)
 
 
+def table_borders(tc, below_hex, below_pt):
+    """Cell borders: none except a bottom rule; no fill (components.table: no vertical rules, no grid)."""
+    tcpr = tc.get_or_add_tcPr()
+    for ch in list(tcpr):
+        tcpr.remove(ch)
+    for side in ("lnL", "lnR", "lnT"):
+        ln = etree.SubElement(tcpr, qa(side))
+        ln.set("w", "0")
+        etree.SubElement(ln, qa("noFill"))
+    ln = etree.SubElement(tcpr, qa("lnB"))
+    ln.set("w", str(int(round(below_pt * 12700))))
+    ln.set("cap", "flat")
+    ln.set("cmpd", "sng")
+    ln.set("algn", "ctr")
+    sf = etree.SubElement(ln, qa("solidFill"))
+    etree.SubElement(sf, qa("srgbClr")).set("val", below_hex)
+    etree.SubElement(ln, qa("prstDash")).set("val", "solid")
+    etree.SubElement(tcpr, qa("noFill"))
+
+
+def table_col_widths(b: Builder, rows, total_w):
+    """Column widths follow the source's first-row cell x positions (last column: its shape width), scaled to total_w."""
+    first = [b.src.shapes[r["src"]] for r in rows[0]]
+    xs = [s["box"][0] / EMU_IN for s in first]
+    ws = [xs[i + 1] - xs[i] for i in range(len(xs) - 1)] + [first[-1]["box"][2] / EMU_IN]
+    k = total_w / sum(ws)
+    return [w * k for w in ws]
+
+
+def render_table(b: Builder, spec: dict):
+    d = b.d
+    lay = d.t["layouts"]["table"]
+    comp = d.t["components"]["table"]
+    g = Geo(d, lay)
+    reg = spec["regions"]
+    rows, header = reg["rows"], reg.get("header") or []
+    ncol = len(rows[0])
+    if any(len(r) != ncol for r in rows):
+        sys.exit(f"S{spec['src']}: table rows have different column counts")
+    header = [None] * (ncol - len(header)) + list(header)      # a shorter header is right-aligned (e.g. no header over a number column)
+    ca = d.chrome["content_area"]
+    x0, w_tot = g.x(lay["regions"]["header_row"]["box"][0]), g.w(lay["regions"]["header_row"]["box"][2])
+    top = ca[1] + (0.6 if spec.get("slots", {}).get("lead") else 0)
+    hh, pitch = g.h(lay["regions"]["header_row"]["box"][3]), g.h(lay["row_pitch"])
+    cap = lay["capacity"]["rows"]
+    bottom = ca[1] + ca[3]
+    cw = table_col_widths(b, rows, w_tot)
+    ins = comp["row"]["cell_insets"]
+    key_cols = {j for j in range(ncol)
+                if all((r_.get("bold") for pr in b.src.runs(row[j]) for _, r_ in pr if r_ is not None) for row in rows)}
+    mins = {s_: d.min_size(d.style(s_)) for s_ in ("table_cell", "table_key", "table_header")}
+
+    def cell_paras(ref, j, ratio):
+        st = d.style("table_key" if j in key_cols else comp["row"]["style"])
+        return b.restyle(b.src.paras(ref, st, keep_runs=True), ratio, mins)
+
+    def over(group, ratio):
+        bad = []
+        for i, row in enumerate(group):
+            for j, ref in enumerate(row):
+                need = text_height(cell_paras(ref, j, ratio), (cw[j] - ins[0] - ins[2]) * 72)
+                if need > (pitch - ins[1] - ins[3]) * 72 + 0.5:
+                    bad.append((i, j))
+        return bad
+
+    room = int((bottom - top - hh) // pitch)
+    limit = max(1, min(cap, room))
+
+    def plan_groups(group):
+        if len(group) > limit:
+            half = math.ceil(len(group) / 2)
+            return plan_groups(group[:half]) + plan_groups(group[half:])
+        ratio = 1.0
+        while ratio >= 0.85 - 1e-9:
+            if not over(group, ratio):
+                return [(group, ratio)]
+            ratio = round(ratio - 0.025, 3)
+        if len(group) <= 1:
+            return [(group, 0.85)]
+        half = math.ceil(len(group) / 2)
+        return plan_groups(group[:half]) + plan_groups(group[half:])
+
+    groups = plan_groups(rows)
+    for gi, (group, ratio) in enumerate(groups):
+        part = (gi + 1, len(groups)) if len(groups) > 1 else None
+        page = b.new_slide(spec, part)
+        slide = page.slide
+        if len(groups) > 1:
+            page.fit["split"] = f"{len(rows)}행 → {[len(x) for x, _ in groups]} (헤더 반복)"
+        if ratio < 1:
+            page.fit.setdefault("shrunk", {})["cells"] = f"×{ratio:.3f}"
+        left = over(group, ratio)
+        if left:
+            page.fit.setdefault("issues", []).append(f"셀 넘침 {left}")
+        b.lead(slide, spec, [x0, ca[1], w_tot, 0.4], page=page)
+        n = len(group) + 1
+        gf = slide.shapes.add_table(n, ncol, emu(x0), emu(top), emu(w_tot), emu(hh + pitch * len(group)))
+        tbl = gf.table
+        tblpr = tbl._tbl.tblPr
+        for att in list(tblpr.attrib):
+            del tblpr.attrib[att]
+        for ch in list(tblpr):
+            tblpr.remove(ch)
+        for j, w in enumerate(cw):
+            tbl.columns[j].width = emu(w)
+        tbl.rows[0].height = emu(hh)
+        for i in range(1, n):
+            tbl.rows[i].height = emu(pitch)
+        hst = d.style(comp["header"]["style"])
+        rb = comp["header"]["rule_below"]
+        for j in range(ncol):
+            c = tbl.cell(0, j)
+            c.margin_left, c.margin_top, c.margin_right, c.margin_bottom = (emu(v) for v in ins)
+            c.vertical_anchor = MSO_ANCHOR.MIDDLE
+            write_paras(c.text_frame, b.restyle(b.src.paras(header[j], hst), ratio, mins) if header[j] else [Para([])])
+            table_borders(c._tc, d.hex(rb["color"]), rb["width_pt"])
+        rr = comp["row"]["rule_below"]
+        for i, row in enumerate(group, start=1):
+            for j, ref in enumerate(row):
+                c = tbl.cell(i, j)
+                c.margin_left, c.margin_top, c.margin_right, c.margin_bottom = (emu(v) for v in ins)
+                c.vertical_anchor = MSO_ANCHOR.MIDDLE
+                write_paras(c.text_frame, cell_paras(ref, j, ratio))
+                table_borders(c._tc, d.hex(rr["color"]), rr["width_pt"])
+
+
 def render_generic(b: Builder, spec: dict):
     """Layouts whose regions are plain text boxes (section, references, bullets…): each region with a
     `box` gets its referenced text in the region style. Components other than bullets are not drawn."""
@@ -1427,6 +1554,7 @@ def render_generic(b: Builder, spec: dict):
 RENDERERS = {
     "io_steps": render_io_steps,
     "card_grid": render_card_grid,
+    "table": render_table,
     "cover": render_cover,
     "closing": lambda b, s: render_cover(b, s, closing=True),
     "image_full": render_image_full,
@@ -1434,7 +1562,7 @@ RENDERERS = {
     "section": render_generic, "references": render_generic, "bullets": render_generic,
     "bullets_image": render_generic, "screenshot_steps": render_generic,
 }
-NOT_YET = ("table", "toc", "intro_columns", "visual_kv", "image_pair_kv")
+NOT_YET = ("toc", "intro_columns", "visual_kv", "image_pair_kv")
 
 
 # ---------------------------------------------------------------- report
