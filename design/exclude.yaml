@@ -1,0 +1,9 @@
+# Elements in samples/ that must NOT become part of the design.
+# extract_design.py skips matching pictures (dhash hamming distance <= 6, or md5 prefix match)
+# everywhere: slides, layouts, masters, and the generated base template.
+images:
+  - note: >-
+      "MINISTRY OF SCIENCE, TECHNOLOGY AND INNOVATION / MALAYSIAN SPACE AGENCY" banner,
+      placed top-left on slides (event co-branding). Excluded at user request, 2026-10-13.
+    dhash: 1686c0dc33713317
+    md5: [9796a063, aa03922d]
