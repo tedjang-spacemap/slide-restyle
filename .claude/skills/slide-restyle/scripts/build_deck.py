@@ -768,10 +768,12 @@ class Builder:
                 fhex, falpha = self.color_expr(bs.get("fill"), rule)
                 lhex, lalpha = self.color_expr(bs.get("line"), rule)
                 self.box_used[i] = self.box_used.get(i, 0) + 1
+                src_dashed = (sh.get("line") or {}).get("dash") not in (None, "solid")
+                rule_dash = bs.get("dash", "keep")          # keep | none | dash — DESIGN.md box_styles.<style>.dash
                 return {"name": rule["style"], "geom": bs.get("geom", "roundRect"), "corner_adj": bs.get("corner_adj"),
                         "fill": fhex, "fill_alpha": falpha, "line": lhex, "line_alpha": lalpha,
                         "line_pt": bs.get("line_pt", 0.86), "text": self.color_expr(bs.get("text"))[0] if bs.get("text") else None,
-                        "dash": (sh.get("line") or {}).get("dash") not in (None, "solid"), "source": bs.get("source")}
+                        "dash": {"keep": src_dashed, "none": False, "dash": True}[rule_dash], "source": bs.get("source")}
         return None
 
     def paint_box(self, slide, box, bx):

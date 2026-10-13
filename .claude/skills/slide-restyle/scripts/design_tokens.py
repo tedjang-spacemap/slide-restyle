@@ -104,6 +104,15 @@ def validate(tokens: dict, root: Path) -> tuple[list[str], list[str]]:
                 if c not in colors:
                     errors.append(f"chrome.{vname}.style_overrides.colors: unknown color {c!r}")
 
+    for name, bs in (tokens["components"].get("box_styles") or {}).items():
+        if bs.get("dash", "keep") not in ("keep", "none", "dash"):
+            errors.append(f"components.box_styles.{name}.dash: keep|none|dash, got {bs.get('dash')!r}")
+        for k in ("fill", "line"):
+            v = str(bs.get(k, "none"))
+            base = v.split(".")[0]
+            if v not in ("none", "<box_map.line>") and base not in colors and not HEX.match(v):
+                errors.append(f"components.box_styles.{name}.{k}: unknown color {v!r}")
+
     for name, lay in tokens["layouts"].items():
         src = lay.get("source")
         if src not in ("measured", "estimated"):
