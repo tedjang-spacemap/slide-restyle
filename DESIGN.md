@@ -450,7 +450,7 @@ layouts:
       diagram:  {box: [0.42, 2.62, 12.5, 4.16], fit: contain, align: top-center, bottom_with_footnote: 6.42}
       footnote: {box: [0.42, 6.5, 12.5, 0.28], style: io_note, optional: true, max_lines: 1}
     shape: {fill: panel, line_default: rule_subtle, keep: [geometry, dash, width, arrowheads], effects: none}
-    text: {bold: heading, regular: body, size: "원본 × 배율", min_size: 8, color: "deck.color_map (없으면 text)"}
+    text: {bold: heading, regular: body, size: "원본 × 배율", min_size: 12, color: "deck.color_map (없으면 text)"}
     capacity: {shapes: 40}
   references:
     use_for: 출처/참고문헌 목록
