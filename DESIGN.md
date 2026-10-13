@@ -186,6 +186,7 @@ components:
     fill: "status.fill"
     text: {style: pill, color: "status.hex"}
     sizes: {header: [4.13, 0.43], in_table: [1.6, 0.51]}
+    fit_width: {min_w: 1.6, pad: 0.25, align: r, source: estimated, basis: "R:S3–S8 배지는 긴 문구라 4.13″. 짧은 상태 문구(‘활성’)는 글자 폭 + 여백, 최소 in_table 폭 1.6″, 오른쪽 끝은 슬롯에 맞춤 (M3)"}
   panel:
     source: measured
     evidence: "R:S4–S8"
@@ -223,14 +224,28 @@ components:
     note: "태그→색 대응은 덱마다 plan.json의 deck.tags에 적는다. 원본 색과 가까운 색을 고른다"
   step_cell:
     source: estimated
-    basis: "panel 컴포넌트(R:S4–S8 실측)를 표 셀 크기로 사용"
+    basis: "panel 컴포넌트(R:S4–S8 실측)를 표 셀 크기로 사용. 칸 종류별 색은 box_styles + plan.json deck.box_map (M3)"
     shape: roundRect
     corner_adj: 6000
     fill: panel
     line: {color: rule_subtle, width_pt: 0.75}
-    kind_line: {width_pt: 1.25, color: "tag.hex", use: "처리 칸만 — 대표 태그 색 테두리. 원본이 점선이면 dash 유지"}
     insets: [0.1, 0.04, 0.1, 0.04]
     anchor: ctr
+  box_styles:
+    # 샘플 슬라이드의 상자(도형) 스타일 — design.json box_styles 실측. 입력 덱의 상자 종류는 plan.json deck.box_map으로
+    # 이 중 하나에 대응시킨다(도식·단계 셀·카드·표지 칩 공통). fill/line은 색 이름 또는 `<색>.fill`, text는 상자 안 기본 글자색
+    # (원본에서 본문색이던 런만 바뀜). 모양(geom)은 도식에서는 원본 유지, 새로 그리는 칸에서는 이 값.
+    # 상태 상자 안 본문은 흰색·보조색 그대로 둔다: 샘플의 상태색 글자는 12pt Bold 짧은 배지 문구뿐이고, 본문에 쓰면 7장 Don't(노랑 본문)와
+    # 대비 기준(60A5FA/1E3A66 = 4.46 < 4.5)에 걸린다. 상태 채움은 예외 단계에만 써서 샘플의 면적 비율(패널:상태색 ≈ 9–13:1)을 지킨다 (M3).
+    panel:        {geom: roundRect, corner_adj: 2222, fill: panel, line: panel, line_pt: 0.86, source: measured, evidence: "R:S4–S8"}
+    panel_alt:    {geom: roundRect, corner_adj: 2222, fill: panel_alt, line: rule_subtle, line_pt: 0.86, source: measured, evidence: "R:S7"}
+    status_blue:  {geom: roundRect, corner_adj: 17857, fill: status_blue.fill, line: status_blue.fill, line_pt: 0.86, source: measured, evidence: "R:S2,S6–S8 (Arial 12 Bold 60A5FA)"}
+    status_amber: {geom: roundRect, corner_adj: 17857, fill: status_amber.fill, line: status_amber.fill, line_pt: 0.86, source: measured, evidence: "R:S2,S3,S5 (Arial 12 Bold FFC000)"}
+    status_red:   {geom: roundRect, corner_adj: 17857, fill: status_red.fill, line: status_red.fill, line_pt: 0.86, source: measured, evidence: "R:S2,S4 (Arial 12 Bold F87171)"}
+    frame:        {geom: rect, fill: none, line: rule_subtle, line_pt: 0.65, source: measured, evidence: "R:S3 (그림 테두리)"}
+    callout:      {geom: rect, fill: FFFFFF, line: status_red, line_pt: 0.65, text: status_red, source: measured, evidence: "R:S3 (흰 바탕 라벨)"}
+    panel_line:   {geom: roundRect, corner_adj: 2222, fill: panel, line: "<box_map.line>", line_pt: 1.25, source: estimated, basis: "샘플에 색 테두리 상자 없음. 상태색이 없는 종류(보라·초록·강조 파일)는 panel + 색 테두리"}
+    dash:         {source: estimated, basis: "샘플에 점선 상자 없음(점선은 R:S3 타원·R:S4 호뿐). 원본 상자가 점선이면 대응 스타일에 점선만 유지"}
   arrow:
     source: estimated
     basis: "샘플에 화살표 없음. rule 색 선 + 삼각 화살촉"
@@ -424,6 +439,18 @@ layouts:
         rows: {y: [2.12], h: 1.6}
         card: {number: {style: stat_number, h: 0.6}, label: {style: stat_label, h: 0.3}, detail: {style: io_note, max_lines: 2}}
         capacity: {cards: 4}
+  diagram_restyle:
+    use_for: "자유 배치 도식(상자 + 연결선) — 원본 도형의 배치·연결을 그대로 두고 색·글꼴만 이 디자인으로 다시 칠함"
+    native: collision
+    source: estimated
+    basis: "샘플에 도식 없음(M3, 사용자 결정). 원본 도형 XML을 복제해 본문 영역에 균등 비율로 맞추고, 채움=panel, 선=deck.line_map/color_map, 글자=굵게→heading·보통→body. 그림자 등 효과 제거(6장 평면 원칙)"
+    regions:
+      lead:     {box: [0.42, 2.12, 12.5, 0.4], style: lead_compact, optional: true, max_lines: 1}
+      diagram:  {box: [0.42, 2.62, 12.5, 4.16], fit: contain, align: top-center, bottom_with_footnote: 6.42}
+      footnote: {box: [0.42, 6.5, 12.5, 0.28], style: io_note, optional: true, max_lines: 1}
+    shape: {fill: panel, line_default: rule_subtle, keep: [geometry, dash, width, arrowheads], effects: none}
+    text: {bold: heading, regular: body, size: "원본 × 배율", min_size: 8, color: "deck.color_map (없으면 text)"}
+    capacity: {shapes: 40}
   references:
     use_for: 출처/참고문헌 목록
     native: srmc
@@ -464,6 +491,7 @@ overflow:
     bullets:          {lines: 9}
     io_steps:         {rows: 5, step_lines: 3}
     card_grid:        {cards: 6, card_body_lines: 3}
+    diagram_restyle:  {scale_min: 0.7, note: "배율이 0.7 미만이면 글자가 너무 작아 split(도식을 둘로) 또는 수작업"}
 ```
 
 ## 1. Visual Theme & Atmosphere
@@ -516,7 +544,10 @@ overflow:
 - **불릿 (추정)**: `•` 노란색, L1 Roboto Light 20 흰색, L2 17 회색, 들여쓰기 0.3″/0.6″.
 - **이미지 프레임**: 스크린샷은 테두리 없이 좌상단 정렬(C). 비교용 그림은 `4B5563` 0.65pt 테두리 + 위 헤더 + 아래 캡션(R:S3).
 - **강조 표시**: 스크린샷 위 빨간 3pt 둥근 사각형(C:S2), 그림 위 빨간 점선 타원 + 흰 바탕 라벨(R:S3).
-- **단계 셀·카드 (추정)**: 패널(`0B1426` 82%) 둥근 사각형. 처리 칸은 대표 태그 색 1.25pt 테두리, 원본이 점선이면 점선 유지.
+- **상자 스타일**: 샘플 실측 상자는 패널(`0B1426` 82%), **상태 상자**(어두운 상태색 채움 + 같은 색 선 + 밝은 상태색 Bold 글자,
+  R:S2–S8), 그림 테두리(`4B5563` 0.65pt, 채움 없음), 흰 바탕 라벨(R:S3). 입력 덱의 상자 종류는 plan.json `deck.box_map`으로
+  이 중 하나에 대응시켜 도식·단계 셀·카드·표지 칩에 똑같이 쓴다. 상태 채움은 **예외 단계에만**(샘플에서 상태색은 배지 크기 강조, 패널
+  대비 면적 약 1/10), 흔한 종류는 패널 + 색 테두리 **(추정)**. 상태 상자 안 본문은 흰색 — 상태색 글자는 짧은 배지 문구 전용.
 - **글자 태그 (추정)**: D/N/A/H 같은 한 글자 표시는 채움 없이 상태색 Bold 글자로. 태그→색 대응은 덱마다 정한다(plan.json).
 - **화살표 (추정)**: `808080` 1pt 선 + 삼각 화살촉.
 
@@ -553,6 +584,7 @@ overflow:
 | bullets / bullets_image | 불릿 본문 (+이미지) | collision | 추정 | 추정 |
 | io_steps | 입력 → 처리 → 출력 단계 행 (3열 × 최대 5행) | collision | 추정 | 추정 |
 | card_grid | 카드 3×2 / 2×2 (+배너, 범례), 숫자 카드 1×4(`stats`) | collision | 추정 | 추정 |
+| diagram_restyle | 자유 도식을 배치 그대로 다시 칠함 | collision | 추정 | 추정 |
 
 표지의 단계 칩 행(`flow`)과 범례(`legend`)도 **(추정)** 선택 영역이다(M2, 입력 덱에 표지 칩이 있어 추가).
 
@@ -572,7 +604,8 @@ overflow:
 **Don't**
 - 흰 배경, 밝은 패널, 그라데이션, 그림자를 넣지 않는다.
 - 제외된 MINISTRY 배너나 다른 기관 로고를 좌상단에 넣지 않는다. 그 자리는 비워 둔다.
-- 노랑을 본문 단락 전체에 쓰지 않는다(제목·숫자·짧은 강조만).
+- 노랑을 본문 단락 전체에 쓰지 않는다(제목·숫자·짧은 강조만). 상태 상자 안 본문도 흰색이다.
+- 상태색 채움을 흔한 요소에 쓰지 않는다. 예외·주의 단계만 채우고 나머지는 패널 + 얇은 색 테두리.
 - 표에 세로선이나 셀 배경 격자를 쓰지 않는다.
 - Office 테마 색(파랑 4472C4 등)을 그대로 쓰지 않는다.
 
@@ -596,8 +629,8 @@ overflow:
    입력/처리/출력처럼 열 머리글 아래 같은 모양 상자가 행마다 화살표로 이어진 격자 → `io_steps`(5행 초과 시 분할).
 5. 병렬 항목 3개(또는 2개) → `intro_columns`. 같은 형식 카드 4–6개 → `card_grid`, 큰 숫자 + 이름 카드 → `card_grid.stats`.
 6. 출처/참고문헌 → `references`.
-7. SmartArt, 자유 배치 도식, 도형 10개 이상이 겹친 다이어그램 → 억지로 맞추지 말고 원본 렌더 이미지를 `image_full`로
-   넣고 보고서에 **수작업 필요**로 표시.
+7. 자유 배치 도식(상자·연결선만으로 된 다이어그램) → `diagram_restyle`로 원본 배치를 유지한 채 다시 칠한다(사용자 결정 M3).
+   그림·SmartArt·차트가 섞여 다시 칠할 수 없는 도식만 원본 렌더 이미지를 `image_full`로 넣고 보고서에 **수작업 필요**로 표시.
 8. 원문 텍스트는 바꾸지 않는다. 키커는 입력에 섹션 정보가 있을 때만 채우고, 없으면 덱 제목을 쓴다.
    제목이 "① 섹션 — 소제목" 꼴이면 키커 `< ① 섹션 >` + 제목 "소제목"으로 나눈다(글자는 그대로, 자리만 옮김. 사용자 결정 2026-10-13).
    제목 끝에 다른 크기·색의 상태 문구가 붙어 있으면 `status` 배지로 옮긴다.
