@@ -63,7 +63,7 @@ plan.json + DESIGN.md ─build_deck.py→ outputs/x.pptx ─render.sh→ work/x/
   상자 안 본문은 흰색. 패널:상태 채움 면적 10:1(샘플 9–13:1).
 - 남은 판단: `card_grid.stats`는 카드 한 줄이라 아래 절반이 빈다. S4 "승인 큐" 상자의 `accept · reject · skip`이 두 줄로 꺾인다
   (Roboto가 맑은 고딕보다 넓음 — 높이 검사는 통과).
-- 구현하지 않은 레이아웃: table, toc, intro_columns, visual_kv, image_pair_kv (입력에 없음 — 쓰이면 build_deck이 중단하고 알림).
+- 구현하지 않은 레이아웃: toc, intro_columns, visual_kv, image_pair_kv (입력에 없음 — 쓰이면 build_deck이 중단하고 알림).
   section/references/bullets/bullets_image/screenshot_steps는 영역 상자에 텍스트만 넣는 기본형.
 
 ### M4 — SKILL.md로 묶기   [완료 2026-10-13, 사용자 확인 대기]
