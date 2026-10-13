@@ -45391,6 +45391,482 @@
    "id": "C14"
   }
  ],
+ "box_styles": [
+  {
+   "geom": "roundRect",
+   "fill": "1E3A66",
+   "fill_alpha": 1,
+   "line": "1E3A66",
+   "line_pt": 0.86,
+   "dash": "solid",
+   "count": 6,
+   "evidence": [
+    "R:S2",
+    "R:S6",
+    "R:S7",
+    "R:S8"
+   ],
+   "median_in": [
+    4.13,
+    0.51
+   ],
+   "text": [
+    {
+     "font": "Arial",
+     "size": 12.0,
+     "bold": true,
+     "color": "60A5FA",
+     "n": 6
+    }
+   ]
+  },
+  {
+   "geom": "ellipse",
+   "fill": "60A5FA",
+   "fill_alpha": 1,
+   "line": "60A5FA",
+   "line_pt": 0.86,
+   "dash": "solid",
+   "count": 5,
+   "evidence": [
+    "R:S4",
+    "R:S5",
+    "R:S6",
+    "R:S7",
+    "R:S8"
+   ],
+   "median_in": [
+    0.43,
+    0.43
+   ],
+   "text": []
+  },
+  {
+   "geom": "roundRect",
+   "fill": "4D3A0A",
+   "fill_alpha": 1,
+   "line": "4D3A0A",
+   "line_pt": 0.86,
+   "dash": "solid",
+   "count": 4,
+   "evidence": [
+    "R:S2",
+    "R:S3",
+    "R:S5"
+   ],
+   "median_in": [
+    4.13,
+    0.51
+   ],
+   "text": [
+    {
+     "font": "Arial",
+     "size": 12.0,
+     "bold": true,
+     "color": "FFC000",
+     "n": 4
+    }
+   ]
+  },
+  {
+   "geom": "roundRect",
+   "fill": "0B1426",
+   "fill_alpha": 0.82,
+   "line": "0B1426",
+   "line_pt": 0.86,
+   "dash": "solid",
+   "count": 4,
+   "evidence": [
+    "R:S4",
+    "R:S5",
+    "R:S6",
+    "R:S8"
+   ],
+   "median_in": [
+    5.87,
+    4.8
+   ],
+   "text": [
+    {
+     "font": "Arial",
+     "size": 12.0,
+     "bold": true,
+     "color": "FFB4B6",
+     "n": 4
+    },
+    {
+     "font": "Arial",
+     "size": 12.0,
+     "bold": true,
+     "color": "7FA8F5",
+     "n": 3
+    },
+    {
+     "font": "Arial",
+     "size": 12.0,
+     "bold": false,
+     "color": "B8C4DA",
+     "n": 3
+    }
+   ]
+  },
+  {
+   "geom": "ellipse",
+   "fill": "F87171",
+   "fill_alpha": 1,
+   "line": "F87171",
+   "line_pt": 0.86,
+   "dash": "solid",
+   "count": 4,
+   "evidence": [
+    "R:S4",
+    "R:S5",
+    "R:S7"
+   ],
+   "median_in": [
+    0.37,
+    0.37
+   ],
+   "text": []
+  },
+  {
+   "geom": "rect",
+   "fill": "7FA8F5",
+   "fill_alpha": 1,
+   "line": "7FA8F5",
+   "line_pt": 0.86,
+   "dash": "solid",
+   "count": 3,
+   "evidence": [
+    "R:S4",
+    "R:S5",
+    "R:S8"
+   ],
+   "median_in": [
+    0.4,
+    0.21
+   ],
+   "text": []
+  },
+  {
+   "geom": "rect",
+   "fill": "2E2610",
+   "fill_alpha": 0.82,
+   "line": "2E2610",
+   "line_pt": 0.86,
+   "dash": "solid",
+   "count": 2,
+   "evidence": [
+    "R:S2"
+   ],
+   "median_in": [
+    12.0,
+    0.61
+   ],
+   "text": [
+    {
+     "font": "Arial",
+     "size": 12.0,
+     "bold": false,
+     "color": "FFFFFF",
+     "n": 6
+    },
+    {
+     "font": "Arial",
+     "size": 12.0,
+     "bold": true,
+     "color": "FFC000",
+     "n": 2
+    },
+    {
+     "font": "Arial",
+     "size": 13.3,
+     "bold": true,
+     "color": "FFFFFF",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "geom": "roundRect",
+   "fill": "5A1E22",
+   "fill_alpha": 1,
+   "line": "5A1E22",
+   "line_pt": 0.86,
+   "dash": "solid",
+   "count": 2,
+   "evidence": [
+    "R:S2",
+    "R:S4"
+   ],
+   "median_in": [
+    4.13,
+    0.51
+   ],
+   "text": [
+    {
+     "font": "Arial",
+     "size": 12.0,
+     "bold": true,
+     "color": "F87171",
+     "n": 2
+    }
+   ]
+  },
+  {
+   "geom": "rect",
+   "fill": null,
+   "fill_alpha": null,
+   "line": "4B5563",
+   "line_pt": 0.65,
+   "dash": "solid",
+   "count": 2,
+   "evidence": [
+    "R:S3"
+   ],
+   "median_in": [
+    3.45,
+    4.6
+   ],
+   "text": [
+    {
+     "font": "Arial",
+     "size": 10.7,
+     "bold": true,
+     "color": "F87171",
+     "n": 2
+    }
+   ]
+  },
+  {
+   "geom": "ellipse",
+   "fill": null,
+   "fill_alpha": null,
+   "line": "F87171",
+   "line_pt": 1.72,
+   "dash": "dash",
+   "count": 2,
+   "evidence": [
+    "R:S3"
+   ],
+   "median_in": [
+    0.55,
+    0.74
+   ],
+   "text": []
+  },
+  {
+   "geom": "rect",
+   "fill": "FFFFFF",
+   "fill_alpha": 1,
+   "line": "F87171",
+   "line_pt": 0.65,
+   "dash": "solid",
+   "count": 2,
+   "evidence": [
+    "R:S3"
+   ],
+   "median_in": [
+    1.27,
+    0.29
+   ],
+   "text": [
+    {
+     "font": "Arial",
+     "size": 10.7,
+     "bold": true,
+     "color": "F87171",
+     "n": 2
+    }
+   ]
+  },
+  {
+   "geom": "rect",
+   "fill": "F87171",
+   "fill_alpha": 1,
+   "line": "F87171",
+   "line_pt": 0.86,
+   "dash": "solid",
+   "count": 2,
+   "evidence": [
+    "R:S6",
+    "R:S8"
+   ],
+   "median_in": [
+    0.4,
+    0.21
+   ],
+   "text": []
+  },
+  {
+   "geom": "roundRect",
+   "fill": null,
+   "fill_alpha": null,
+   "line": "FF0000",
+   "line_pt": 3.0,
+   "dash": "solid",
+   "count": 1,
+   "evidence": [
+    "C:S2"
+   ],
+   "median_in": [
+    5.51,
+    0.28
+   ],
+   "text": []
+  },
+  {
+   "geom": "rect",
+   "fill": "2E1517",
+   "fill_alpha": 0.82,
+   "line": "2E1517",
+   "line_pt": 0.86,
+   "dash": "solid",
+   "count": 1,
+   "evidence": [
+    "R:S2"
+   ],
+   "median_in": [
+    12.0,
+    0.61
+   ],
+   "text": [
+    {
+     "font": "Arial",
+     "size": 12.0,
+     "bold": false,
+     "color": "FFFFFF",
+     "n": 3
+    },
+    {
+     "font": "Arial",
+     "size": 13.3,
+     "bold": true,
+     "color": "FFFFFF",
+     "n": 1
+    },
+    {
+     "font": "Arial",
+     "size": 12.0,
+     "bold": true,
+     "color": "F87171",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "geom": "arc",
+   "fill": null,
+   "fill_alpha": null,
+   "line": "2A3A5C",
+   "line_pt": 0.86,
+   "dash": "dash",
+   "count": 1,
+   "evidence": [
+    "R:S4"
+   ],
+   "median_in": [
+    6.67,
+    4.0
+   ],
+   "text": [
+    {
+     "font": "Arial",
+     "size": 12.0,
+     "bold": true,
+     "color": "7FA8F5",
+     "n": 1
+    },
+    {
+     "font": "Arial",
+     "size": 12.0,
+     "bold": true,
+     "color": "FFB4B6",
+     "n": 1
+    },
+    {
+     "font": "Arial",
+     "size": 12.0,
+     "bold": false,
+     "color": "7C8BA8",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "geom": "ellipse",
+   "fill": "7FA8F5",
+   "fill_alpha": 1,
+   "line": "7FA8F5",
+   "line_pt": 0.86,
+   "dash": "solid",
+   "count": 1,
+   "evidence": [
+    "R:S6"
+   ],
+   "median_in": [
+    0.37,
+    0.37
+   ],
+   "text": []
+  },
+  {
+   "geom": "roundRect",
+   "fill": "182233",
+   "fill_alpha": 0.82,
+   "line": "4B5563",
+   "line_pt": 0.86,
+   "dash": "solid",
+   "count": 1,
+   "evidence": [
+    "R:S7"
+   ],
+   "median_in": [
+    5.87,
+    4.8
+   ],
+   "text": [
+    {
+     "font": "Arial",
+     "size": 12.0,
+     "bold": false,
+     "color": "B8C0CC",
+     "n": 3
+    },
+    {
+     "font": "Arial",
+     "size": 16.0,
+     "bold": true,
+     "color": "F87171",
+     "n": 2
+    },
+    {
+     "font": "Arial",
+     "size": 14.7,
+     "bold": true,
+     "color": "FFFFFF",
+     "n": 1
+    }
+   ]
+  },
+  {
+   "geom": "ellipse",
+   "fill": "FFC000",
+   "fill_alpha": 1,
+   "line": "FFC000",
+   "line_pt": 0.86,
+   "dash": "solid",
+   "count": 1,
+   "evidence": [
+    "R:S7"
+   ],
+   "median_in": [
+    0.29,
+    0.29
+   ],
+   "text": []
+  }
+ ],
  "excluded": [
   {
    "note": "\"MINISTRY OF SCIENCE, TECHNOLOGY AND INNOVATION / MALAYSIAN SPACE AGENCY\" banner, placed top-left on slides (event co-branding). Excluded at user request, 2026-10-13.",

@@ -42,15 +42,29 @@ plan.json + DESIGN.md ─build_deck.py→ outputs/x.pptx ─render.sh→ work/x/
 - 결과: 10장 → 11장. io_steps 5, image_full 3(수작업 필요 S2·S4·S7, 원본 렌더라 밝은 배경), card_grid 2, cover 1.
   도식 3장 처리와 태그 색(D 파랑·H 노랑·A 분홍·N 회색)은 현재 안대로 두고 M3 렌더 검수에서 다시 본다.
 
-### M3 — build_deck.py + render 검수 루프   [예정]
+### M3 — build_deck.py + render 검수 루프   [완료 2026-10-13, 사용자 확인 대기]
 - 산출물: `build_deck.py`, 검수 루프, `outputs/<deck>.report.md` 형식
 - 확인 기준: 변환 결과 PPT와 PNG, 보고서
-- [ ] `base.pptx` 위에 슬라이드 추가, `--variant`로 chrome 선택
-- [ ] 베이스 테마의 ea 폰트 자체를 Pretendard로 교체 (런 단위 `<a:ea>` 지정이 빠져도 맑은 고딕으로 돌아가지 않게)
-- [ ] 실제 폰트로 줄바꿈을 계산해 넘침 판단 → 축소 → 재배치 → 분할 (요약은 Claude 판단)
-- [ ] `render.sh` → PNG → Claude 검수(넘침, 겹침, 폰트 대체) → 재생성
-- [ ] 보고서: 사용 변형, 추정 레이아웃 목록, 요약·분할 내역, 수작업 필요 슬라이드
-- [ ] (선택) 공식 pptx 스킬 `validate.py`로 OOXML 무결성 검사
+- [x] `base.pptx` 위에 슬라이드 추가, `--variant`로 chrome 선택 (collision/srmc 둘 다 생성·렌더 확인)
+- [x] 베이스 테마의 ea 폰트 자체를 Pretendard로 교체 (+ Hang 스크립트, theme3의 맑은 고딕 latin → Arial/Roboto Light)
+- [x] 실제 폰트로 줄바꿈을 계산해 넘침 판단 → 축소 → 재배치 → 분할 (io_steps는 행 단위 자동 분할. 요약은 Claude 판단)
+- [x] `render.sh` → PNG → Claude 검수(넘침, 겹침, 폰트 대체) → 재생성
+- [x] 보고서: 사용 변형, 추정 레이아웃 목록, 요약·분할 내역, 수작업 필요 슬라이드, 테마 폰트 교체, 렌더 폰트 대체
+- [x] (선택) 공식 pptx 스킬 `validate.py` — 생성 슬라이드는 통과. `ppt/authors.xml` 오류 1건은 base.pptx에서 온 것(검사기에 2018 스키마 없음)
+- 결과: spacemap-flow 10장 → 11장, 두 변형 모두 대체 폰트 0. 축소·자동 분할이 필요한 장 없음.
+  M2 plan.json이 워크트리 삭제로 사라져 PLAN의 M2 결과대로 다시 작성(check_plan 통과).
+  검수에서 고친 것: latin 폰트에 없는 글자(①, →) → ea 폰트 런으로 분리, 불릿 `buFont` 명시, 상태 배지 폭을 글자에 맞춤,
+  카드 제목은 원본 색 대신 스타일 색.
+- 도식 3장(S2·S4·S7): 처음엔 image_full(원본 렌더)이었으나 다크 덱에서 흰 판으로 보여, 사용자 결정으로 `diagram_restyle`
+  (원본 도형 XML 복제 → 배치 유지, 색·글꼴만 다시 칠함, DECISIONS #21)로 바꿨다. 배율 collision 1.03/0.84/0.82, srmc 0.99/0.92/0.89.
+  수작업 필요 장은 없어졌다.
+- 상자 스타일(DECISIONS #22): 샘플 상자를 측정해 `components.box_styles`로 옮기고, 입력 상자 12종을 `box_map`으로 대응(실측 7종 99곳,
+  추정 5종 21곳). 색 검토 후 B안: H 사람 = 상태 상자 노랑(유일한 채움), D·A·N·핵심 파일 = 색 테두리 패널(추정), 외부·미정 = 그림 테두리 점선.
+  상자 안 본문은 흰색. 패널:상태 채움 면적 10:1(샘플 9–13:1).
+- 남은 판단: `card_grid.stats`는 카드 한 줄이라 아래 절반이 빈다. S4 "승인 큐" 상자의 `accept · reject · skip`이 두 줄로 꺾인다
+  (Roboto가 맑은 고딕보다 넓음 — 높이 검사는 통과).
+- 구현하지 않은 레이아웃: table, toc, intro_columns, visual_kv, image_pair_kv (입력에 없음 — 쓰이면 build_deck이 중단하고 알림).
+  section/references/bullets/bullets_image/screenshot_steps는 영역 상자에 텍스트만 넣는 기본형.
 
 ### M4 — SKILL.md로 묶기   [예정]
 - [ ] `.claude/skills/slide-restyle/SKILL.md` — `design` / `convert` 흐름

@@ -776,7 +776,62 @@ def describe(rec):
     return f"{k} {pos}"
 
 
-def write_summary(out: Path, decks, chrome_by_deck, clusters, st, font_avail, excluder, base_info, canon):
+def sample_ids(design_md=Path("DESIGN.md")):
+    """file name -> sample id (C, R …) from DESIGN.md meta.samples, so evidence matches the tokens."""
+    try:
+        from design_tokens import load
+        return {smp["file"]: smp["id"] for smp in load(design_md)["meta"]["samples"]}
+    except Exception:
+        return {}
+
+
+def box_styles(decks, canon):
+    """Box (shape) styles used on slides: (geom, fill, line, dash) with evidence, typical size and the text
+    style drawn inside — the shape's own text, or a text box lying on the same rectangle (Google Slides
+    decks draw labels as separate boxes). Full-slide backgrounds and lines are skipped."""
+    tol = 0.06 * 914400
+    out = {}
+    ids = sample_ids()
+    for d in decks:
+        did = ids.get(d["file"], d["file"][0].upper())
+        for s in d["slides"]:
+            recs = list(flatten(s["shapes"]))
+            texts = [r for r in recs if r.get("kind") == "text"]
+            for r in recs:
+                if r.get("kind") not in ("shape", "text") or not r.get("geom"):
+                    continue
+                f, ln = r.get("fill"), r.get("line")
+                if not (f and f.get("hex")) and not (ln and ln.get("hex")):
+                    continue
+                x, y, w, h = r["bbox"]
+                if w * h > 0.8 * canon[0] * canon[1]:
+                    continue
+                key = (r["geom"], (f or {}).get("hex"), (f or {}).get("alpha", 1) if f else None,
+                       (ln or {}).get("hex"), (ln or {}).get("width_pt"), (ln or {}).get("dash"))
+                e = out.setdefault(key, {"count": 0, "evidence": [], "sizes": [], "text": collections.Counter()})
+                e["count"] += 1
+                tag = f"{did}:S{s['n']}"
+                if tag not in e["evidence"]:
+                    e["evidence"].append(tag)
+                e["sizes"].append((w, h))
+                inner = [r] if r.get("kind") == "text" else [
+                    t for t in texts if t is not r and t["bbox"][0] >= x - tol and t["bbox"][1] >= y - tol
+                    and t["bbox"][0] + t["bbox"][2] <= x + w + tol and t["bbox"][1] + t["bbox"][3] <= y + h + tol]
+                for t in inner:
+                    sig = text_sig(t)
+                    if sig:
+                        e["text"][sig] += 1
+    res = []
+    for (geom, fhex, falpha, lhex, lw, dash), e in sorted(out.items(), key=lambda kv: -kv[1]["count"]):
+        ws, hs = sorted(w for w, _ in e["sizes"]), sorted(h for _, h in e["sizes"])
+        res.append({"geom": geom, "fill": fhex, "fill_alpha": falpha, "line": lhex, "line_pt": lw, "dash": dash,
+                    "count": e["count"], "evidence": e["evidence"],
+                    "median_in": [inch(ws[len(ws) // 2]), inch(hs[len(hs) // 2])],
+                    "text": [{"font": k[0], "size": k[1], "bold": k[2], "color": k[3], "n": n} for k, n in e["text"].most_common(3)]})
+    return res
+
+
+def write_summary(out: Path, decks, chrome_by_deck, clusters, st, font_avail, excluder, base_info, canon, boxes=()):
     type_scale, text_colors, fonts, fills, lines = st
     L = []
     L.append("# Design extraction summary\n")
@@ -807,6 +862,13 @@ def write_summary(out: Path, decks, chrome_by_deck, clusters, st, font_avail, ex
     L.append("\n## Line colors\n")
     for (c, w, dash), n in lines.most_common(10):
         L.append(f"- #{c} {w}pt {dash}: {n}")
+    L.append("\n## Box styles (geom, fill, line) — slides only, with text drawn inside\n")
+    for bx in boxes:
+        fill = f"#{bx['fill']}{'@' + str(bx['fill_alpha']) if bx['fill_alpha'] not in (None, 1) else ''}" if bx["fill"] else "-"
+        line = f"#{bx['line']} {bx['line_pt']}pt{' ' + bx['dash'] if bx['dash'] and bx['dash'] != 'solid' else ''}" if bx["line"] else "-"
+        txt = "; ".join(f"{t['font']} {t['size']}pt{' B' if t['bold'] else ''} #{t['color']}" for t in bx["text"]) or "no text"
+        L.append(f"- {bx['geom']} fill={fill} line={line} ×{bx['count']} ~{bx['median_in'][0]}×{bx['median_in'][1]}in "
+                 f"[{', '.join(bx['evidence'][:6])}] text: {txt}")
     L.append("\n## Masters / layouts actually used\n")
     for d in decks:
         for m in d["masters"]:
@@ -884,6 +946,7 @@ def main():
     chrome_by_deck = {d["file"]: find_chrome(d) for d in decks}
     clusters = cluster_slides(decks)
     st = stats(decks)
+    boxes = box_styles(decks, canon)
 
     # design assets: master/layout pictures, chrome pictures, pictures repeated on >= 2 slides
     keep = set()
@@ -911,11 +974,12 @@ def main():
         "decks": decks,
         "chrome": {k: [{**{kk: vv for kk, vv in c.items() if kk != "key"}} for c in v] for k, v in chrome_by_deck.items()},
         "clusters": clusters,
+        "box_styles": boxes,
         "excluded": [{"note": r.get("note"), "placements": excluder.hits.get(i, [])} for i, r in enumerate(excluder.rules)],
         "assets": sorted(p.name for p in assets.iterdir()),
     }
     (a.out / "design.json").write_text(json.dumps(data, ensure_ascii=False, indent=1, default=str))
-    write_summary(a.out / "summary.md", decks, chrome_by_deck, clusters, st, font_avail, excluder, base_info, canon)
+    write_summary(a.out / "summary.md", decks, chrome_by_deck, clusters, st, font_avail, excluder, base_info, canon, boxes)
     print(f"wrote {a.out}/design.json, summary.md, base.pptx, base.potx, assets/ ({len(keep)} images)")
     print(f"clusters: {len(clusters)}; excluded placements: {sum(len(v) for v in excluder.hits.values())}")
 

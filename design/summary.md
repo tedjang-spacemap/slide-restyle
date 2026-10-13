@@ -87,6 +87,27 @@ Canonical slide size: 13.34 × 7.5 in (12193588 × 6858000 EMU). All values belo
 - #2E2610 0.86pt solid: 2
 - #5A1E22 0.86pt solid: 2
 
+## Box styles (geom, fill, line) — slides only, with text drawn inside
+
+- roundRect fill=#1E3A66 line=#1E3A66 0.86pt ×6 ~4.13×0.51in [R:S2, R:S6, R:S7, R:S8] text: Arial 12.0pt B #60A5FA
+- ellipse fill=#60A5FA line=#60A5FA 0.86pt ×5 ~0.43×0.43in [R:S4, R:S5, R:S6, R:S7, R:S8] text: no text
+- roundRect fill=#4D3A0A line=#4D3A0A 0.86pt ×4 ~4.13×0.51in [R:S2, R:S3, R:S5] text: Arial 12.0pt B #FFC000
+- roundRect fill=#0B1426@0.82 line=#0B1426 0.86pt ×4 ~5.87×4.8in [R:S4, R:S5, R:S6, R:S8] text: Arial 12.0pt B #FFB4B6; Arial 12.0pt B #7FA8F5; Arial 12.0pt #B8C4DA
+- ellipse fill=#F87171 line=#F87171 0.86pt ×4 ~0.37×0.37in [R:S4, R:S5, R:S7] text: no text
+- rect fill=#7FA8F5 line=#7FA8F5 0.86pt ×3 ~0.4×0.21in [R:S4, R:S5, R:S8] text: no text
+- rect fill=#2E2610@0.82 line=#2E2610 0.86pt ×2 ~12.0×0.61in [R:S2] text: Arial 12.0pt #FFFFFF; Arial 12.0pt B #FFC000; Arial 13.3pt B #FFFFFF
+- roundRect fill=#5A1E22 line=#5A1E22 0.86pt ×2 ~4.13×0.51in [R:S2, R:S4] text: Arial 12.0pt B #F87171
+- rect fill=- line=#4B5563 0.65pt ×2 ~3.45×4.6in [R:S3] text: Arial 10.7pt B #F87171
+- ellipse fill=- line=#F87171 1.72pt dash ×2 ~0.55×0.74in [R:S3] text: no text
+- rect fill=#FFFFFF line=#F87171 0.65pt ×2 ~1.27×0.29in [R:S3] text: Arial 10.7pt B #F87171
+- rect fill=#F87171 line=#F87171 0.86pt ×2 ~0.4×0.21in [R:S6, R:S8] text: no text
+- roundRect fill=- line=#FF0000 3.0pt ×1 ~5.51×0.28in [C:S2] text: no text
+- rect fill=#2E1517@0.82 line=#2E1517 0.86pt ×1 ~12.0×0.61in [R:S2] text: Arial 12.0pt #FFFFFF; Arial 13.3pt B #FFFFFF; Arial 12.0pt B #F87171
+- arc fill=- line=#2A3A5C 0.86pt dash ×1 ~6.67×4.0in [R:S4] text: Arial 12.0pt B #7FA8F5; Arial 12.0pt B #FFB4B6; Arial 12.0pt #7C8BA8
+- ellipse fill=#7FA8F5 line=#7FA8F5 0.86pt ×1 ~0.37×0.37in [R:S6] text: no text
+- roundRect fill=#182233@0.82 line=#4B5563 0.86pt ×1 ~5.87×4.8in [R:S7] text: Arial 12.0pt #B8C0CC; Arial 16.0pt B #F87171; Arial 14.7pt B #FFFFFF
+- ellipse fill=#FFC000 line=#FFC000 0.86pt ×1 ~0.29×0.29in [R:S7] text: no text
+
 ## Masters / layouts actually used
 
 - Collision_Avoidance_User_Guide_EN_SPACEMAP(MYSA).pptx M1L4 '빈 화면' used_by=1 theme='1_Office 테마' master_bg={'solid': {'hex': 'FFFFFF', 'scheme': 'lt1'}} layout_bg=None
