@@ -66,6 +66,6 @@ plan.json + DESIGN.md ─build_deck.py→ outputs/x.pptx ─render.sh→ work/x/
 - 구현하지 않은 레이아웃: table, toc, intro_columns, visual_kv, image_pair_kv (입력에 없음 — 쓰이면 build_deck이 중단하고 알림).
   section/references/bullets/bullets_image/screenshot_steps는 영역 상자에 텍스트만 넣는 기본형.
 
-### M4 — SKILL.md로 묶기   [예정]
-- [ ] `.claude/skills/slide-restyle/SKILL.md` — `design` / `convert` 흐름
-- [ ] description에 "샘플 PPT로 DESIGN.md를 만들고 다른 PPT를 그 디자인으로 변환" 명시
+### M4 — SKILL.md로 묶기   [완료 2026-10-13, 사용자 확인 대기]
+- [x] `.claude/skills/slide-restyle/SKILL.md` — `design` / `convert` 흐름
+- [x] description에 "샘플 PPT로 DESIGN.md를 만들고 다른 PPT를 그 디자인으로 변환" 명시
