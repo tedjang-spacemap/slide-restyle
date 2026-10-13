@@ -22,7 +22,7 @@ plan.json + DESIGN.md ─build_deck.py→ outputs/x.pptx ─render.sh→ work/x/
 
 ## 마일스톤
 
-### M1 — extract_design.py + DESIGN.md 초안   [완료 2026-10-13, 브랜치 m1-design]
+### M1 — extract_design.py + DESIGN.md 초안   [완료 2026-10-13]
 - 산출물: `extract_design.py`, `design_tokens.py`(검증기), `render.sh`, `reference/design-md-template.md`,
   `DESIGN.md`, `design/`(design.json, summary.md, assets/, base.pptx, base.potx, exclude.yaml)
 - 확인 기준: 토큰이 샘플 실측값과 맞는지, 실측/추정이 구분되는지, 필요한 폰트 목록
