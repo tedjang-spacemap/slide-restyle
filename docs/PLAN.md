@@ -29,14 +29,18 @@ plan.json + DESIGN.md ─build_deck.py→ outputs/x.pptx ─render.sh→ work/x/
 - 결과: 토큰만으로 C:S5와 표지를 다시 그려 원본과 비교(`work/specimen/compare.png`). 레이아웃 13개 중
   6개 실측, 7개 추정. 사용자 결정 3건 반영 후 변형 2개(collision/srmc)로 확장.
 
-### M2 — extract_content.py + 레이아웃 분류   [대기]
-- 산출물: `extract_content.py`, `content.json` 스키마, 레이아웃 분류 결과 `work/<deck>/plan.json`
+### M2 — extract_content.py + 레이아웃 분류   [완료 2026-10-13]
+- 산출물: `extract_content.py`, `check_plan.py`, `reference/content-schema.md`·`plan-schema.md`,
+  레이아웃 분류 결과 `work/<deck>/plan.json`(+ `plan.md` 분류표)
 - 확인 기준: 입력 PPT 슬라이드별 분류표, 변환 불가 후보(SmartArt, 자유 배치 도식 등)
-- 첫 입력: `inputs/spacemap-flow.pptx` (10장)
-- [ ] `extract_content.py` — 슬라이드별 텍스트 계층, 이미지, 표, 도형 수, 노트 (결정적)
-- [ ] `content.json` 스키마
-- [ ] DESIGN.md 9장 규칙으로 분류 → `plan.json` (넘침 시 축소/분할/요약 판단 포함)
-- [ ] 분류표 사용자 확인 — 카탈로그에 없는 레이아웃이 필요한지 점검
+- 첫 입력: `inputs/spacemap-flow.pptx` (10장 → 출력 11장)
+- [x] `extract_content.py` — 슬라이드별 텍스트 계층(런 서식), 이미지, 표, 차트, SmartArt, 노트 + 특징값(역할 후보, 격자, 연결 경로) (결정적)
+- [x] `content.json` / `plan.json` 스키마 (`reference/`)
+- [x] 카탈로그 확장 (사용자 결정, DECISIONS #13): `io_steps`, `card_grid`(+`stats`), `cover.flow`/`legend` — 모두 추정
+- [x] DESIGN.md 9장 규칙으로 분류 → `plan.json`, `check_plan.py`로 원문 축자·누락·한도 검사 통과
+- [x] 분류표 사용자 확인
+- 결과: 10장 → 11장. io_steps 5, image_full 3(수작업 필요 S2·S4·S7, 원본 렌더라 밝은 배경), card_grid 2, cover 1.
+  도식 3장 처리와 태그 색(D 파랑·H 노랑·A 분홍·N 회색)은 현재 안대로 두고 M3 렌더 검수에서 다시 본다.
 
 ### M3 — build_deck.py + render 검수 루프   [예정]
 - 산출물: `build_deck.py`, 검수 루프, `outputs/<deck>.report.md` 형식

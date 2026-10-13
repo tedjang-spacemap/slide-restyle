@@ -63,7 +63,7 @@ def validate(tokens: dict, root: Path) -> tuple[list[str], list[str]]:
         if t.get("font") not in fonts:
             errors.append(f"type.{name}.font: unknown font role {t.get('font')!r}")
         col = t.get("color")
-        if col and col not in colors and not str(col).startswith("status.") and not HEX.match(str(col)):
+        if col and col not in colors and not str(col).startswith(("status.", "tag.")) and not HEX.match(str(col)):
             errors.append(f"type.{name}.color: unknown color {col!r}")
         if "source" not in t:
             errors.append(f"type.{name}: missing source")
