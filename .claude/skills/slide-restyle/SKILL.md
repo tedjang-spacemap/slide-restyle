@@ -44,4 +44,4 @@ argument-hint: design <sample.pptx…> | convert <input.pptx> [--variant collisi
    (넘침은 축소 → 재배치 → 분할 → 요약 순, DESIGN.md 8장).
 7. 보고: 출력 경로, 사용 변형, 추정으로 그려진 레이아웃, 요약·분할 내역, 수작업 필요 장, 렌더 폰트 대체.
 
-미구현 레이아웃(table, toc, intro_columns, visual_kv, image_pair_kv)이 필요하면 build_deck이 중단한다. 우회하지 말고 사용자에게 알린다.
+미구현 레이아웃(toc, intro_columns, visual_kv, image_pair_kv)이 필요하면 build_deck이 중단한다. 우회하지 말고 사용자에게 알린다.
