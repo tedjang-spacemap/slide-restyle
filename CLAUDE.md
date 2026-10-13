@@ -2,7 +2,7 @@
 
 샘플 PPT의 디자인을 DESIGN.md로 추출하고, 다른 PPT를 그 디자인으로 변환하는 Claude Code 스킬.
 스킬 본체: `.claude/skills/slide-restyle/` (scripts/, reference/).
-- 계획·마일스톤(M1–M4)·진행 상태: [docs/PLAN.md](docs/PLAN.md) — 현재 M2 완료, M3 대기
+- 계획·마일스톤(M1–M4)·진행 상태: [docs/PLAN.md](docs/PLAN.md) — 현재 M3 완료(사용자 확인 대기), M4 대기
 - 주요 결정과 이유: [docs/DECISIONS.md](docs/DECISIONS.md) — 새 결정은 여기에 추가, 디자인 값 자체는 DESIGN.md
 
 ## Commands
@@ -13,6 +13,7 @@ uv run $S/extract_design.py samples/*.pptx --out design     # 측정 → design/
 uv run $S/design_tokens.py DESIGN.md                        # DESIGN.md의 yaml design-tokens 블록 검증
 uv run $S/extract_content.py inputs/x.pptx --render         # → work/x/{content.json,media/,src_png/}
 uv run $S/check_plan.py work/x/plan.json --md work/x/plan.md # plan.json 원문 축자·누락·한도 검사 + 분류표
+uv run $S/build_deck.py work/x/plan.json [--variant srmc] --render  # → outputs/x.pptx + x.report.md, work/x/build/<variant>/{build.json,png/}
 $S/render.sh <deck.pptx> <out_dir> [dpi]                    # PDF + slide-N.png + 폰트 대체 경고
 ```
 스크립트는 PEP 723 헤더로 의존성을 선언 → 항상 `uv run`으로 실행 (전역 pip 설치 없음).
