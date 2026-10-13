@@ -1,7 +1,9 @@
 # slide-restyle
 
 샘플 PPT의 디자인을 DESIGN.md로 추출하고, 다른 PPT를 그 디자인으로 변환하는 Claude Code 스킬.
-스킬 본체: `.claude/skills/slide-restyle/` (scripts/, reference/). 진행: M1 완료(브랜치 m1-design), M2 대기.
+스킬 본체: `.claude/skills/slide-restyle/` (scripts/, reference/).
+- 계획·마일스톤(M1–M4)·진행 상태: [docs/PLAN.md](docs/PLAN.md) — 현재 M1 완료, M2 대기
+- 주요 결정과 이유: [docs/DECISIONS.md](docs/DECISIONS.md) — 새 결정은 여기에 추가, 디자인 값 자체는 DESIGN.md
 
 ## Commands
 
