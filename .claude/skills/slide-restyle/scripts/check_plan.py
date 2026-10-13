@@ -9,8 +9,8 @@
 Checks:
   verbatim   every {"t", "src"} text in the plan is a substring of that source shape's text
              (whitespace-collapsed) — the plan may split and move text, never rewrite it
-  coverage   every source shape with text is used by a text ref, shown by an image_full slide
-             (`covers`), or listed in the slide's `dropped` with a reason
+  coverage   every source shape with text is used by a text ref, shown by an image_full slide or redrawn
+             by a diagram_restyle slide (`covers`), or listed in the slide's `dropped` with a reason
   layouts    layout / layout_variant exist in DESIGN.md; capacity limits (rows, cards, flow items)
   files      image_full `image` files exist (relative to the plan's folder)
 Prints the classification table; --md also writes it as Markdown for user review.
@@ -112,10 +112,10 @@ def main():
             img = sl.get("regions", {}).get("image", {}).get("file")
             if not img or not (base / img).exists():
                 errors.append(f"{tag}: image_full file missing: {img!r}")
-            cov = sl.get("covers", [])
-            if cov == "all":
-                cov = [s["id"] for s in content["slides"][sl["src"] - 1]["shapes"]]
-            covered.update(cov)
+        cov = sl.get("covers", [])      # image_full: shown as image; diagram_restyle: redrawn verbatim
+        if cov == "all":
+            cov = [s["id"] for s in content["slides"][sl["src"] - 1]["shapes"]]
+        covered.update(cov)
         for d in sl.get("dropped", []):
             if not d.get("why"):
                 errors.append(f"{tag}: dropped {d.get('src')} without why")
